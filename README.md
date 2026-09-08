@@ -9,17 +9,17 @@ ConoHa VPS 上に AI 常駐サーバー（Claude Code / herdr / rclone クラウ
 | `conoha-vps.sh` | 手元のPC | ConoHa VPS 3.0 API でインスタンスの作成 / 一覧 / 削除 |
 | `startup-ai-server.sh` | VPS (初回起動時に自動実行) | スタートアップスクリプト版。ユーザー作成から環境構築まで無人で行う |
 | `setup-ai-server.sh` | VPS (手動実行) | 構築済みVPSに一般ユーザーとしてログインして手動実行する版 |
+| `.env.example` | 手元のPC | ConoHa API 認証情報の雛形。`.env` にコピーして使う（`.env` は git 管理外） |
 
 構築される環境: XFCE + xrdp / Chromium / rclone + systemdタイマーによる双方向同期(bisync) / Claude Code / herdr / スワップ4GB / UFW(SSH・RDPのみ)
 
 ## クイックスタート
 
 ```bash
-# 1. ConoHaコントロールパネル「API」画面で APIユーザーを作成し、値を設定
-export CONOHA_USER_ID="..."
-export CONOHA_PASSWORD="..."
-export CONOHA_TENANT_ID="..."
-export CONOHA_ROOT_PASS="rootに設定する強いパスワード"
+# 1. ConoHaコントロールパネル「API」画面で APIユーザーを作成し、.env に値を記入
+#    (.env は git 管理外。conoha-vps.sh が自動で読み込む。export で環境変数にしても可)
+cp .env.example .env
+#    → CONOHA_USER_ID / CONOHA_PASSWORD / CONOHA_TENANT_ID / CONOHA_ROOT_PASS を埋める
 
 # 2. startup-ai-server.sh の冒頭 USERNAME / PASSWORD を書き換える（必須）
 
@@ -48,7 +48,7 @@ export CONOHA_ROOT_PASS="rootに設定する強いパスワード"
 
 ## セキュリティ上の注意
 
-- **認証情報をこのリポジトリにコミットしないこと**。API認証は環境変数、パスワード類はプレースホルダのまま管理し、実値は投入時に差し替える
+- **認証情報をこのリポジトリにコミットしないこと**。API認証は `.env`（git 管理外。雛形は `.env.example`）か環境変数で渡し、パスワード類はプレースホルダのまま管理して実値は投入時に差し替える
 - `startup-ai-server.sh` の初期パスワードのまま公開ネットワークに晒さない（RDPは3389が全開放のため、構築後すぐ `passwd` で変更）
 - 必要に応じて `ai-server-rdp` セキュリティグループのソースIPを自社IPに絞る
 
